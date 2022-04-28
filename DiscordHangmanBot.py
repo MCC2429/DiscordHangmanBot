@@ -1,13 +1,13 @@
 # bot.py
 import os
-# import discord
+import discord
 import random
 import re
 # import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 # from gallows import *
-from gallowsimg import *
+# from gallowsimg import *
 
 
 load_dotenv()
@@ -24,7 +24,7 @@ guessed_letters = []
 game_status = False
 hm_word = ""
 guess_number = 0
-gallowsimg_list = [gallowsimg_0, gallowsimg_1, gallowsimg_2, gallowsimg_3, gallowsimg_4, gallowsimg_5, gallowsimg_6, gallowsimg_7, gallowsimg_8]
+# gallowsimg_list = [gallowsimg_0, gallowsimg_1, gallowsimg_2, gallowsimg_3, gallowsimg_4, gallowsimg_5, gallowsimg_6, gallowsimg_7, gallowsimg_8]
 
 @bot.event
 async def on_ready():
@@ -69,7 +69,8 @@ async def hm_easy(ctx):
         print(num_of_characters)
         print("The word is:", hm_word)
         embed1 = await create_embed_1(hm_word, number_of_characters(hm_word))
-        await ctx.send(embed=embed1)
+        gallowsimg_0 = gallow_img(guess_number)
+        await ctx.send(file=gallowsimg_0, embed=embed1)
         return hm_word, hm_channel
     elif game_on:
         await ctx.send("A game of hangman has already started, please finish it before starting a new one.")
@@ -89,6 +90,7 @@ async def hm_hard(ctx):
         print(num_of_characters)
         print("The word is:", hm_word)
         embed1 = await create_embed_1(hm_word, number_of_characters(hm_word))
+        gallowsimg_0 = gallow_img(guess_number)
         await ctx.send(file=gallowsimg_0, embed=embed1)
         return hm_word, hm_channel
     elif game_on:
@@ -119,14 +121,16 @@ async def letter_guess(ctx):
                 # await ctx.send(new_num_of_chars)
                 # print(new_noc)
                 gallows_print = await create_gallows(guess_number, new_num_of_chars)
-                await ctx.send(file=gallowsimg_1, embed=gallows_print)
+                gallows_img = gallow_img(guess_number)
+                await ctx.send(file=gallows_img, embed=gallows_print)
                 await wincon(new_num_of_chars, hm_word, hml_channel)
                 break
             else:
                 new_noc = replace_uscore(letter, hm_word, guessed_letters)
                 guess_number += 1
                 gallows_print = await create_gallows(guess_number, new_num_of_chars)
-                await ctx.send(file=gallowsimg_list[guess_number], embed=gallows_print)
+                gallows_img = gallow_img(guess_number)
+                await ctx.send(file=gallows_img, embed=gallows_print)
                 await wincon(new_num_of_chars, hm_word, hml_channel)
                 return guess_number
 
@@ -196,6 +200,11 @@ async def wincon(new_num_of_chars, hm_word, hml_channel):
     elif guess_number == 8:
         await bot.get_channel(hml_channel).send("Oh no!  The word was " + hm_word.strip() + ".  You failed to save the hangman!")
         game_over()
+
+
+def gallow_img(guess_number):
+    gallows_img = discord.File("KamGaming/Hangman{}.jpg".format(guess_number), filename="image{}.jpg".format(guess_number))
+    return gallows_img
 
 
 async def create_gallows(guess_number, new_num_of_chars):
